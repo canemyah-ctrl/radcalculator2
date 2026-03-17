@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RadCal</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0f0e;
+    --surface: #161817;
+    --surface2: #1e201e;
+    --border: #2a2d2a;
+    --border2: #363a36;
+    --pink: #f569c8;   --pink-dim: #c43f9a;
+    --blue: #42b4ff;   --blue-dim: #1a8fd4;
+    --canada: #ff5252; --canada-dim: #cc3333;
+    --usa: #ff9d42;    --usa-dim: #cc7520;
+    --amber: #f5c842;
+    --text: #f0f2ee;   --text2: #8a9188; --text3: #5a5f58;
+    --red: #ff6b6b;
+    --radius: 12px;    --radius-sm: 8px;
+  }
+
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; min-height: 100vh; line-height: 1.5; }
+  .app { max-width: 520px; margin: 0 auto; padding: 0 0 80px; min-height: 100vh; }
+
+  /* Header */
+  .header { padding: 2rem 1.5rem 1.25rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); z-index: 10; }
+  .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .app-name { font-family: 'Montserrat', sans-serif; font-size: 20px; font-weight: 900; color: #ffffff; letter-spacing: 0.08em; text-transform: uppercase; }
+  .version-badge { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); background: var(--surface2); padding: 3px 8px; border-radius: 20px; border: 1px solid var(--border); }
+
+  /* Two-row tab layout */
+  .tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .tab { padding: 7px 4px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 11px; cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.3; }
+  .tab:hover:not(.active) { border-color: var(--border2); color: var(--text); }
+  .tab[data-tab="formula"].active { border-color: var(--pink);   background: rgba(245,105,200,0.08); color: var(--pink);   font-weight: 500; }
+  .tab[data-tab="eu"].active      { border-color: var(--blue);   background: rgba(66,180,255,0.08);  color: var(--blue);   font-weight: 500; }
+  .tab[data-tab="canada"].active  { border-color: var(--canada); background: rgba(255,82,82,0.08);   color: var(--canada); font-weight: 500; }
+  .tab[data-tab="usa"].active     { border-color: var(--usa);    background: rgba(255,157,66,0.08);  color: var(--usa);    font-weight: 500; }
+  .tab[data-tab="gst"].active     { border-color: var(--amber);  background: rgba(245,200,66,0.08);  color: var(--amber);  font-weight: 500; }
+  .tab[data-tab="history"].active { border-color: var(--border2); background: var(--surface2); color: var(--text); font-weight: 500; }
+
+  /* Panels */
+  .panel { display: none; padding: 1.5rem; }
+  .panel.active { display: block; }
+
+  /* Inputs */
+  .field { margin-bottom: 1rem; }
+  .field-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  .input-wrap { display: flex; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; transition: border-color 0.15s; }
+  .input-pre { padding: 0 12px; font-family: 'DM Mono', monospace; font-size: 14px; color: var(--text3); border-right: 1px solid var(--border); height: 44px; display: flex; align-items: center; background: var(--surface2); }
+  .input-wrap input { flex: 1; padding: 0 14px; height: 44px; background: transparent; border: none; outline: none; font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text); width: 100%; }
+  .input-wrap input::placeholder { color: var(--text3); }
+  .panel-pink   .input-wrap:focus-within { border-color: var(--pink); }
+  .panel-blue   .input-wrap:focus-within { border-color: var(--blue); }
+  .panel-canada .input-wrap:focus-within { border-color: var(--canada); }
+  .panel-usa    .input-wrap:focus-within { border-color: var(--usa); }
+  .panel-amber  .input-wrap:focus-within { border-color: var(--amber); }
+
+  /* Formula chip */
+  .formula-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; font-family: 'DM Mono', monospace; font-size: 12px; margin-bottom: 1.5rem; }
+  .formula-chip .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .chip-pink   { color: var(--pink-dim);   } .chip-pink   .dot { background: var(--pink); }
+  .chip-blue   { color: var(--blue-dim);   } .chip-blue   .dot { background: var(--blue); }
+  .chip-canada { color: var(--canada-dim); } .chip-canada .dot { background: var(--canada); }
+  .chip-usa    { color: var(--usa-dim);    } .chip-usa    .dot { background: var(--usa); }
+  .chip-amber  { color: var(--amber);      } .chip-amber  .dot { background: var(--amber); }
+
+  .section-head { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin: 1.5rem 0 0.75rem; }
+
+  /* Breakdown */
+  .breakdown { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem; }
+  .breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+  .breakdown-row:last-child { border-bottom: none; }
+  .b-label { font-size: 13px; color: var(--text2); }
+  .b-label .op { font-family: 'DM Mono', monospace; color: var(--text3); font-size: 12px; margin-right: 4px; }
+  .b-val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--text); }
+  .breakdown-row.total-row { background: var(--surface2); border-top: 1px solid var(--border2); }
+  .total-row .b-label { color: var(--text); font-weight: 500; font-size: 14px; }
+  .total-row .b-val { font-size: 18px; }
+  .panel-pink   .total-row .b-val { color: var(--pink); }
+  .panel-blue   .total-row .b-val { color: var(--blue); }
+  .panel-canada .total-row .b-val { color: var(--canada); }
+  .panel-usa    .total-row .b-val { color: var(--usa); }
+  .panel-amber  .total-row .b-val { color: var(--amber); }
+
+  /* Tax cards */
+  .tax-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+  .tax-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; position: relative; overflow: hidden; }
+  .tax-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--border); }
+  .gc-label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .gc-amount { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .gc-tag { font-size: 11px; color: var(--text3); }
+  .panel-pink   .tax-card.highlighted { border-color: var(--pink);   background: rgba(245,105,200,0.04); }
+  .panel-pink   .tax-card.highlighted::before { background: var(--pink); }
+  .panel-pink   .tax-card.highlighted .gc-amount { color: var(--pink); }
+  .panel-blue   .tax-card.highlighted { border-color: var(--blue);   background: rgba(66,180,255,0.04); }
+  .panel-blue   .tax-card.highlighted::before { background: var(--blue); }
+  .panel-blue   .tax-card.highlighted .gc-amount { color: var(--blue); }
+  .panel-canada .tax-card.highlighted { border-color: var(--canada); background: rgba(255,82,82,0.04); }
+  .panel-canada .tax-card.highlighted::before { background: var(--canada); }
+  .panel-canada .tax-card.highlighted .gc-amount { color: var(--canada); }
+  .panel-usa    .tax-card.highlighted { border-color: var(--usa);    background: rgba(255,157,66,0.04); }
+  .panel-usa    .tax-card.highlighted::before { background: var(--usa); }
+  .panel-usa    .tax-card.highlighted .gc-amount { color: var(--usa); }
+
+  /* Tax info row */
+  .tax-info { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+  .gi-label { font-size: 13px; color: var(--text2); }
+  .gi-val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
+  .panel-pink   .gi-val { color: var(--pink); }
+  .panel-blue   .gi-val { color: var(--blue); }
+  .panel-canada .gi-val { color: var(--canada); }
+  .panel-usa    .gi-val { color: var(--usa); }
+  .panel-amber  .gi-val { color: var(--amber); }
+
+  /* GST toggle */
+  .toggle-group { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 3px; margin-bottom: 1.25rem; }
+  .tog { flex: 1; padding: 8px; border: 1px solid transparent; border-radius: 6px; background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+  .tog.active { background: var(--surface2); border-color: var(--border2); color: var(--amber); font-weight: 500; }
+
+  /* Save buttons */
+  .save-btn { display: block; width: 100%; margin-top: 1.25rem; padding: 13px; border: none; border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .save-btn:active { transform: scale(0.99); }
+  .save-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .save-btn-pink:not(:disabled)   { background: var(--pink);   color: #1a0014; }
+  .save-btn-blue:not(:disabled)   { background: var(--blue);   color: #001a2e; }
+  .save-btn-canada:not(:disabled) { background: var(--canada); color: #1a0000; }
+  .save-btn-usa:not(:disabled)    { background: var(--usa);    color: #1a0a00; }
+  .save-btn:disabled { background: var(--surface2); color: var(--text3); }
+  .save-btn-pink:hover:not(:disabled)   { background: #ff80d8; }
+  .save-btn-blue:hover:not(:disabled)   { background: #70ccff; }
+  .save-btn-canada:hover:not(:disabled) { background: #ff7070; }
+  .save-btn-usa:hover:not(:disabled)    { background: #ffb870; }
+
+  /* History */
+  .history-list { display: flex; flex-direction: column; gap: 8px; }
+  .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; animation: slideIn 0.2s ease; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .hi-tag { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 4px; margin-bottom: 4px; font-weight: 500; }
+  .tag-pink   { background: rgba(245,105,200,0.15); color: var(--pink); }
+  .tag-blue   { background: rgba(66,180,255,0.15);  color: var(--blue); }
+  .tag-canada { background: rgba(255,82,82,0.15);   color: var(--canada); }
+  .tag-usa    { background: rgba(255,157,66,0.15);  color: var(--usa); }
+  .hi-meta    { font-size: 12px; color: var(--text3); margin-bottom: 2px; }
+  .hi-formula { font-size: 13px; color: var(--text2); }
+  .hi-total   { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; text-align: right; }
+  .hi-total.c-pink   { color: var(--pink); }
+  .hi-total.c-blue   { color: var(--blue); }
+  .hi-total.c-canada { color: var(--canada); }
+  .hi-total.c-usa    { color: var(--usa); }
+  .hi-sub { font-size: 11px; color: var(--text3); text-align: right; margin-top: 2px; }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 13px; }
+  .empty-icon  { font-size: 28px; margin-bottom: 0.75rem; opacity: 0.4; }
+  .clear-btn   { display: block; width: 100%; margin-top: 1rem; padding: 10px; background: transparent; border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text3); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.15s; }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-top">
+      <span class="app-name">RadCal</span>
+      <span class="version-badge">NZ · EU · CA · USA</span>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="formula" onclick="switchTab('formula')">NZ Formula<br>÷0.50 ×4</button>
+      <button class="tab" data-tab="eu"      onclick="switchTab('eu')">EU Cal<br>×5</button>
+      <button class="tab" data-tab="canada"  onclick="switchTab('canada')">Canada<br>×0.6 ×4</button>
+      <button class="tab" data-tab="usa"     onclick="switchTab('usa')">USA Cal<br>×5</button>
+      <button class="tab" data-tab="gst"     onclick="switchTab('gst')">GST Tool</button>
+      <button class="tab" data-tab="history" onclick="switchTab('history')">History</button>
+    </div>
+  </div>
+
+  <!-- NZ FORMULA — PINK (USD) -->
+  <div class="panel panel-pink active" id="panel-formula">
+    <div class="formula-chip chip-pink"><span class="dot"></span>(Price ÷ 0.50 × 4) + (Shipping × 2) — USD</div>
+    <div class="field">
+      <div class="field-label">Price</div>
+      <div class="input-wrap"><span class="input-pre">USD</span><input type="number" id="f-price" placeholder="0.00" min="0" step="0.01" oninput="calcFormula()"></div>
+    </div>
+    <div class="field">
+      <div class="field-label">Shipping price</div>
+      <div class="input-wrap"><span class="input-pre">USD</span><input type="number" id="f-ship" placeholder="0.00" min="0" step="0.01" oninput="calcFormula()"></div>
+    </div>
+    <div class="section-head">Breakdown</div>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price ÷ 0.50</span><span class="b-val" id="f-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> Result × 4</span><span class="b-val" id="f-s2">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">3.</span> Shipping × 2</span><span class="b-val" id="f-s3">—</span></div>
+      <div class="breakdown-row total-row"><span class="b-label">Subtotal (excl. GST)</span><span class="b-val" id="f-sub">—</span></div>
+    </div>
+    <div class="section-head">GST Summary (15%)</div>
+    <div class="tax-info"><span class="gi-label">GST amount (15%)</span><span class="gi-val" id="f-gst">—</span></div>
+    <div class="tax-grid">
+      <div class="tax-card"><div class="gc-label">Excl. GST</div><div class="gc-amount" id="f-exgst">—</div><div class="gc-tag">without tax</div></div>
+      <div class="tax-card highlighted"><div class="gc-label">Incl. GST</div><div class="gc-amount" id="f-ingst">—</div><div class="gc-tag">with tax</div></div>
+    </div>
+    <button class="save-btn save-btn-pink" id="f-save" onclick="saveToHistory('formula')" disabled>Save to History</button>
+  </div>
+
+  <!-- EU CALCULATOR — BLUE -->
+  <div class="panel panel-blue" id="panel-eu">
+    <div class="formula-chip chip-blue"><span class="dot"></span>(Price × 5) + Shipping — EU VAT 20%</div>
+    <div class="field">
+      <div class="field-label">Price</div>
+      <div class="input-wrap"><span class="input-pre">EUR</span><input type="number" id="eu-price" placeholder="0.00" min="0" step="0.01" oninput="calcEU()"></div>
+    </div>
+    <div class="field">
+      <div class="field-label">Shipping price</div>
+      <div class="input-wrap"><span class="input-pre">EUR</span><input type="number" id="eu-ship" placeholder="0.00" min="0" step="0.01" oninput="calcEU()"></div>
+    </div>
+    <div class="section-head">Breakdown</div>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 5</span><span class="b-val" id="eu-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> + Shipping</span><span class="b-val" id="eu-s2">—</span></div>
+      <div class="breakdown-row total-row"><span class="b-label">Subtotal (excl. VAT)</span><span class="b-val" id="eu-sub">—</span></div>
+    </div>
+    <div class="section-head">VAT Summary (20%)</div>
+    <div class="tax-info"><span class="gi-label">VAT amount (20%)</span><span class="gi-val" id="eu-vat">—</span></div>
+    <div class="tax-grid">
+      <div class="tax-card"><div class="gc-label">Excl. VAT</div><div class="gc-amount" id="eu-exvat">—</div><div class="gc-tag">without tax</div></div>
+      <div class="tax-card highlighted"><div class="gc-label">Incl. VAT</div><div class="gc-amount" id="eu-invat">—</div><div class="gc-tag">with tax</div></div>
+    </div>
+    <button class="save-btn save-btn-blue" id="eu-save" onclick="saveToHistory('eu')" disabled>Save to History</button>
+  </div>
+
+  <!-- CANADA — RED -->
+  <div class="panel panel-canada" id="panel-canada">
+    <div class="formula-chip chip-canada"><span class="dot"></span>(Price × 0.6 × 4) + Shipping — HST 13%</div>
+    <div class="field">
+      <div class="field-label">Price</div>
+      <div class="input-wrap"><span class="input-pre">CAD</span><input type="number" id="ca-price" placeholder="0.00" min="0" step="0.01" oninput="calcCanada()"></div>
+    </div>
+    <div class="field">
+      <div class="field-label">Shipping price</div>
+      <div class="input-wrap"><span class="input-pre">CAD</span><input type="number" id="ca-ship" placeholder="0.00" min="0" step="0.01" oninput="calcCanada()"></div>
+    </div>
+    <div class="section-head">Breakdown</div>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 0.6</span><span class="b-val" id="ca-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> Result × 4</span><span class="b-val" id="ca-s2">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">3.</span> + Shipping</span><span class="b-val" id="ca-s3">—</span></div>
+      <div class="breakdown-row total-row"><span class="b-label">Subtotal (excl. HST)</span><span class="b-val" id="ca-sub">—</span></div>
+    </div>
+    <div class="section-head">HST Summary (13%)</div>
+    <div class="tax-info"><span class="gi-label">HST amount (13%)</span><span class="gi-val" id="ca-hst">—</span></div>
+    <div class="tax-grid">
+      <div class="tax-card"><div class="gc-label">Excl. HST</div><div class="gc-amount" id="ca-exhst">—</div><div class="gc-tag">without tax</div></div>
+      <div class="tax-card highlighted"><div class="gc-label">Incl. HST</div><div class="gc-amount" id="ca-inhst">—</div><div class="gc-tag">with tax</div></div>
+    </div>
+    <button class="save-btn save-btn-canada" id="ca-save" onclick="saveToHistory('canada')" disabled>Save to History</button>
+  </div>
+
+  <!-- USA — ORANGE -->
+  <div class="panel panel-usa" id="panel-usa">
+    <div class="formula-chip chip-usa"><span class="dot"></span>(Price × 5) + Shipping — USD</div>
+    <div class="field">
+      <div class="field-label">Price</div>
+      <div class="input-wrap"><span class="input-pre">USD</span><input type="number" id="us-price" placeholder="0.00" min="0" step="0.01" oninput="calcUSA()"></div>
+    </div>
+    <div class="field">
+      <div class="field-label">Shipping price</div>
+      <div class="input-wrap"><span class="input-pre">USD</span><input type="number" id="us-ship" placeholder="0.00" min="0" step="0.01" oninput="calcUSA()"></div>
+    </div>
+    <div class="section-head">Breakdown</div>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 5</span><span class="b-val" id="us-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> + Shipping</span><span class="b-val" id="us-s2">—</span></div>
+      <div class="breakdown-row total-row"><span class="b-label">Total (pre-tax)</span><span class="b-val" id="us-sub">—</span></div>
+    </div>
+    <div class="section-head">Sales Tax (approx. 10%)</div>
+    <div class="tax-info"><span class="gi-label">Est. sales tax (~10%)</span><span class="gi-val" id="us-tax">—</span></div>
+    <div class="tax-grid">
+      <div class="tax-card"><div class="gc-label">Pre-tax</div><div class="gc-amount" id="us-pretax">—</div><div class="gc-tag">excl. sales tax</div></div>
+      <div class="tax-card highlighted"><div class="gc-label">Est. total</div><div class="gc-amount" id="us-total">—</div><div class="gc-tag">incl. ~10% tax</div></div>
+    </div>
+    <button class="save-btn save-btn-usa" id="us-save" onclick="saveToHistory('usa')" disabled>Save to History</button>
+  </div>
+
+  <!-- GST TOOL — AMBER -->
+  <div class="panel panel-amber" id="panel-gst">
+    <div class="formula-chip chip-amber"><span class="dot"></span>New Zealand GST — 15%</div>
+    <div class="toggle-group">
+      <button class="tog active" id="gst-add-btn" onclick="setGSTMode('add')">Add GST</button>
+      <button class="tog" id="gst-rem-btn" onclick="setGSTMode('remove')">Remove GST</button>
+    </div>
+    <div class="field">
+      <div class="field-label" id="gst-input-label">Amount (excl. GST)</div>
+      <div class="input-wrap"><span class="input-pre">NZD</span><input type="number" id="gst-amount" placeholder="0.00" min="0" step="0.01" oninput="calcGST()"></div>
+    </div>
+    <div class="section-head">Result</div>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="b-label" id="gst-base-label">Amount (excl. GST)</span><span class="b-val" id="gst-base">—</span></div>
+      <div class="breakdown-row"><span class="b-label">GST (15%)</span><span class="b-val" id="gst-tax">—</span></div>
+      <div class="breakdown-row total-row"><span class="b-label">Total (incl. GST)</span><span class="b-val" id="gst-total">—</span></div>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="panel" id="panel-history">
+    <div id="history-container">
+      <div class="empty-state"><div class="empty-icon">◎</div>No saved calculations yet.<br>Use the Save button on any calculator.</div>
+    </div>
+    <button class="clear-btn" id="clear-history-btn" onclick="clearHistory()" style="display:none">Clear all history</button>
+  </div>
+
+</div>
+<script>
+  const history = [];
+  let gstMode = 'add';
+
+  const fmtU = n => (n===null||isNaN(n)) ? '—' : '$'  + n.toFixed(2);
+  const fmtE = n => (n===null||isNaN(n)) ? '—' : '€'  + n.toFixed(2);
+  const fmtC = n => (n===null||isNaN(n)) ? '—' : 'C$' + n.toFixed(2);
+
+  function switchTab(name) {
+    const names = ['formula','eu','canada','usa','gst','history'];
+    document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', names[i] === name));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+  }
+
+  function calcFormula() {
+    const p = parseFloat(document.getElementById('f-price').value);
+    const s = parseFloat(document.getElementById('f-ship').value);
+    const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
+    const s1 = hasP ? p/0.5 : null;
+    const s2 = s1!==null ? s1*4 : null;
+    const s3 = hasS ? s*2 : null;
+    const sub = (s2||0)+(s3||0);
+    const v = hasP||hasS;
+    document.getElementById('f-s1').textContent   = fmtU(s1);
+    document.getElementById('f-s2').textContent   = fmtU(s2);
+    document.getElementById('f-s3').textContent   = fmtU(s3);
+    document.getElementById('f-sub').textContent  = v ? fmtU(sub) : '—';
+    document.getElementById('f-gst').textContent  = v ? fmtU(sub*0.15) : '—';
+    document.getElementById('f-exgst').textContent= v ? fmtU(sub) : '—';
+    document.getElementById('f-ingst').textContent= v ? fmtU(sub*1.15) : '—';
+    document.getElementById('f-save').disabled = !v;
+  }
+
+  function calcEU() {
+    const p = parseFloat(document.getElementById('eu-price').value);
+    const s = parseFloat(document.getElementById('eu-ship').value);
+    const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
+    const s1 = hasP ? p*5 : null;
+    const sub = (s1||0)+(hasS?s:0);
+    const v = hasP||hasS;
+    document.getElementById('eu-s1').textContent   = fmtE(s1);
+    document.getElementById('eu-s2').textContent   = hasS ? fmtE(s) : '—';
+    document.getElementById('eu-sub').textContent  = v ? fmtE(sub) : '—';
+    document.getElementById('eu-vat').textContent  = v ? fmtE(sub*0.20) : '—';
+    document.getElementById('eu-exvat').textContent= v ? fmtE(sub) : '—';
+    document.getElementById('eu-invat').textContent= v ? fmtE(sub*1.20) : '—';
+    document.getElementById('eu-save').disabled = !v;
+  }
+
+  function calcCanada() {
+    const p = parseFloat(document.getElementById('ca-price').value);
+    const s = parseFloat(document.getElementById('ca-ship').value);
+    const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
+    const s1 = hasP ? p*0.6 : null;
+    const s2 = s1!==null ? s1*4 : null;
+    const sub = (s2||0)+(hasS?s:0);
+    const v = hasP||hasS;
+    document.getElementById('ca-s1').textContent   = fmtC(s1);
+    document.getElementById('ca-s2').textContent   = fmtC(s2);
+    document.getElementById('ca-s3').textContent   = hasS ? fmtC(s) : '—';
+    document.getElementById('ca-sub').textContent  = v ? fmtC(sub) : '—';
+    document.getElementById('ca-hst').textContent  = v ? fmtC(sub*0.13) : '—';
+    document.getElementById('ca-exhst').textContent= v ? fmtC(sub) : '—';
+    document.getElementById('ca-inhst').textContent= v ? fmtC(sub*1.13) : '—';
+    document.getElementById('ca-save').disabled = !v;
+  }
+
+  function calcUSA() {
+    const p = parseFloat(document.getElementById('us-price').value);
+    const s = parseFloat(document.getElementById('us-ship').value);
+    const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
+    const s1 = hasP ? p*5 : null;
+    const sub = (s1||0)+(hasS?s:0);
+    const v = hasP||hasS;
+    document.getElementById('us-s1').textContent    = fmtU(s1);
+    document.getElementById('us-s2').textContent    = hasS ? fmtU(s) : '—';
+    document.getElementById('us-sub').textContent   = v ? fmtU(sub) : '—';
+    document.getElementById('us-tax').textContent   = v ? fmtU(sub*0.10) : '—';
+    document.getElementById('us-pretax').textContent= v ? fmtU(sub) : '—';
+    document.getElementById('us-total').textContent = v ? fmtU(sub*1.10) : '—';
+    document.getElementById('us-save').disabled = !v;
+  }
+
+  function setGSTMode(m) {
+    gstMode = m;
+    document.getElementById('gst-add-btn').classList.toggle('active', m==='add');
+    document.getElementById('gst-rem-btn').classList.toggle('active', m==='remove');
+    document.getElementById('gst-input-label').textContent = m==='add' ? 'Amount (excl. GST)' : 'Amount (incl. GST)';
+    calcGST();
+  }
+
+  function calcGST() {
+    const raw = parseFloat(document.getElementById('gst-amount').value);
+    if (isNaN(raw)||raw<0) { ['gst-base','gst-tax','gst-total'].forEach(id=>document.getElementById(id).textContent='—'); return; }
+    let base, tax, total;
+    if (gstMode==='add') { base=raw; tax=raw*0.15; total=raw*1.15; }
+    else { total=raw; base=raw/1.15; tax=raw-base; }
+    document.getElementById('gst-base').textContent  = fmtU(base);
+    document.getElementById('gst-tax').textContent   = fmtU(tax);
+    document.getElementById('gst-total').textContent = fmtU(total);
+  }
+
+  function saveToHistory(type) {
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});
+    let e = {type,time};
+    if (type==='formula') {
+      const p=parseFloat(document.getElementById('f-price').value)||0;
+      const s=parseFloat(document.getElementById('f-ship').value)||0;
+      const sub=(p/0.5*4)+(s*2);
+      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}`,main:fmtU(sub*1.15),sub:fmtU(sub)+' excl. GST',color:'c-pink',tag:'tag-pink',tagLabel:'NZ Formula'};
+    } else if (type==='eu') {
+      const p=parseFloat(document.getElementById('eu-price').value)||0;
+      const s=parseFloat(document.getElementById('eu-ship').value)||0;
+      const sub=(p*5)+s;
+      e={...e,label:`Price €${p.toFixed(2)}, Ship €${s.toFixed(2)}`,main:fmtE(sub*1.20),sub:fmtE(sub)+' excl. VAT',color:'c-blue',tag:'tag-blue',tagLabel:'EU Cal'};
+    } else if (type==='canada') {
+      const p=parseFloat(document.getElementById('ca-price').value)||0;
+      const s=parseFloat(document.getElementById('ca-ship').value)||0;
+      const sub=(p*0.6*4)+s;
+      e={...e,label:`Price C$${p.toFixed(2)}, Ship C$${s.toFixed(2)}`,main:fmtC(sub*1.13),sub:fmtC(sub)+' excl. HST',color:'c-canada',tag:'tag-canada',tagLabel:'Canada'};
+    } else {
+      const p=parseFloat(document.getElementById('us-price').value)||0;
+      const s=parseFloat(document.getElementById('us-ship').value)||0;
+      const sub=(p*5)+s;
+      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}`,main:fmtU(sub*1.10),sub:fmtU(sub)+' pre-tax',color:'c-usa',tag:'tag-usa',tagLabel:'USA Cal'};
+    }
+    history.unshift(e);
+    renderHistory();
+    switchTab('history');
+  }
+
+  function renderHistory() {
+    const c=document.getElementById('history-container');
+    const btn=document.getElementById('clear-history-btn');
+    if (!history.length) {
+      c.innerHTML=`<div class="empty-state"><div class="empty-icon">◎</div>No saved calculations yet.<br>Use the Save button on any calculator.</div>`;
+      btn.style.display='none'; return;
+    }
+    btn.style.display='block';
+    c.innerHTML=`<div class="history-list">${history.map(h=>`
+      <div class="history-item">
+        <div>
+          <div class="hi-tag ${h.tag}">${h.tagLabel}</div>
+          <div class="hi-meta">${h.time}</div>
+          <div class="hi-formula">${h.label}</div>
+        </div>
+        <div>
+          <div class="hi-total ${h.color}">${h.main}</div>
+          <div class="hi-sub">${h.sub}</div>
+        </div>
+      </div>`).join('')}</div>`;
+  }
+
+  function clearHistory() { history.length=0; renderHistory(); }
+</script>
+</body>
+</html>
