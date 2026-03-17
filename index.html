@@ -171,9 +171,9 @@
     </div>
     <div class="tabs">
       <button class="tab active" data-tab="formula" onclick="switchTab('formula')">NZ Formula<br>÷0.50 ×4</button>
-      <button class="tab" data-tab="eu"      onclick="switchTab('eu')">EU Cal<br>×5</button>
+      <button class="tab" data-tab="eu"      onclick="switchTab('eu')">EU Cal<br>×4</button>
       <button class="tab" data-tab="canada"  onclick="switchTab('canada')">Canada<br>×0.6 ×4</button>
-      <button class="tab" data-tab="usa"     onclick="switchTab('usa')">USA Cal<br>×5</button>
+      <button class="tab" data-tab="usa"     onclick="switchTab('usa')">USA Cal<br>×4</button>
       <button class="tab" data-tab="gst"     onclick="switchTab('gst')">GST Tool</button>
       <button class="tab" data-tab="history" onclick="switchTab('history')">History</button>
     </div>
@@ -208,7 +208,7 @@
 
   <!-- EU CALCULATOR — BLUE -->
   <div class="panel panel-blue" id="panel-eu">
-    <div class="formula-chip chip-blue"><span class="dot"></span>(Price × 5) + Shipping — EU VAT 20%</div>
+    <div class="formula-chip chip-blue"><span class="dot"></span>(Price × 4) + Shipping — EU VAT 20%</div>
     <div class="field">
       <div class="field-label">Price</div>
       <div class="input-wrap"><span class="input-pre">EUR</span><input type="number" id="eu-price" placeholder="0.00" min="0" step="0.01" oninput="calcEU()"></div>
@@ -219,7 +219,7 @@
     </div>
     <div class="section-head">Breakdown</div>
     <div class="breakdown">
-      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 5</span><span class="b-val" id="eu-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 4</span><span class="b-val" id="eu-s1">—</span></div>
       <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> + Shipping</span><span class="b-val" id="eu-s2">—</span></div>
       <div class="breakdown-row total-row"><span class="b-label">Subtotal (excl. VAT)</span><span class="b-val" id="eu-sub">—</span></div>
     </div>
@@ -261,7 +261,7 @@
 
   <!-- USA — ORANGE -->
   <div class="panel panel-usa" id="panel-usa">
-    <div class="formula-chip chip-usa"><span class="dot"></span>(Price × 5) + Shipping — USD</div>
+    <div class="formula-chip chip-usa"><span class="dot"></span>(Price × 4) + Shipping — USD</div>
     <div class="field">
       <div class="field-label">Price</div>
       <div class="input-wrap"><span class="input-pre">USD</span><input type="number" id="us-price" placeholder="0.00" min="0" step="0.01" oninput="calcUSA()"></div>
@@ -272,7 +272,7 @@
     </div>
     <div class="section-head">Breakdown</div>
     <div class="breakdown">
-      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 5</span><span class="b-val" id="us-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price × 4</span><span class="b-val" id="us-s1">—</span></div>
       <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> + Shipping</span><span class="b-val" id="us-s2">—</span></div>
       <div class="breakdown-row total-row"><span class="b-label">Total (pre-tax)</span><span class="b-val" id="us-sub">—</span></div>
     </div>
@@ -351,7 +351,7 @@
     const p = parseFloat(document.getElementById('eu-price').value);
     const s = parseFloat(document.getElementById('eu-ship').value);
     const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
-    const s1 = hasP ? p*5 : null;
+    const s1 = hasP ? p*4 : null;
     const sub = (s1||0)+(hasS?s:0);
     const v = hasP||hasS;
     document.getElementById('eu-s1').textContent   = fmtE(s1);
@@ -385,7 +385,7 @@
     const p = parseFloat(document.getElementById('us-price').value);
     const s = parseFloat(document.getElementById('us-ship').value);
     const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
-    const s1 = hasP ? p*5 : null;
+    const s1 = hasP ? p*4 : null;
     const sub = (s1||0)+(hasS?s:0);
     const v = hasP||hasS;
     document.getElementById('us-s1').textContent    = fmtU(s1);
@@ -428,7 +428,7 @@
     } else if (type==='eu') {
       const p=parseFloat(document.getElementById('eu-price').value)||0;
       const s=parseFloat(document.getElementById('eu-ship').value)||0;
-      const sub=(p*5)+s;
+      const sub=(p*4)+s;
       e={...e,label:`Price €${p.toFixed(2)}, Ship €${s.toFixed(2)}`,main:fmtE(sub*1.20),sub:fmtE(sub)+' excl. VAT',color:'c-blue',tag:'tag-blue',tagLabel:'EU Cal'};
     } else if (type==='canada') {
       const p=parseFloat(document.getElementById('ca-price').value)||0;
@@ -438,7 +438,7 @@
     } else {
       const p=parseFloat(document.getElementById('us-price').value)||0;
       const s=parseFloat(document.getElementById('us-ship').value)||0;
-      const sub=(p*5)+s;
+      const sub=(p*4)+s;
       e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}`,main:fmtU(sub*1.10),sub:fmtU(sub)+' pre-tax',color:'c-usa',tag:'tag-usa',tagLabel:'USA Cal'};
     }
     history.unshift(e);
