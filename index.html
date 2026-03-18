@@ -193,7 +193,18 @@ body::after {
 .chip-blue   { color: rgba(66,180,255,0.8);  } .chip-blue   .dot { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
 .chip-canada { color: rgba(255,82,82,0.8);   } .chip-canada .dot { background: var(--red);  box-shadow: 0 0 8px var(--red); }
 .chip-usa    { color: rgba(255,157,66,0.8);  } .chip-usa    .dot { background: var(--ora);  box-shadow: 0 0 8px var(--ora); }
-.chip-amber  { color: rgba(245,200,66,0.8);  } .chip-amber  .dot { background: var(--amb);  box-shadow: 0 0 8px var(--amb); }
+.chip-agency { color: rgba(180,150,255,0.85); } .chip-agency .dot { background: #b496ff; box-shadow: 0 0 8px #b496ff; }
+.agency-divider { display: flex; align-items: center; gap: 12px; margin: 1.75rem 0 1.25rem; }
+.agency-divider-line { flex: 1; height: 1px; background: rgba(180,150,255,0.2); }
+.agency-divider-label { font-size: 10px; font-weight: 600; color: #b496ff; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
+.panel-pink .tax-card.agency-hl { border-color: rgba(180,150,255,0.45); background: rgba(180,150,255,0.08); box-shadow: 0 0 28px rgba(180,150,255,0.1); }
+.panel-pink .tax-card.agency-hl::before { background: #b496ff; }
+.panel-pink .tax-card.agency-hl .gc-amount { color: #b496ff; text-shadow: 0 0 18px rgba(180,150,255,0.45); }
+.panel-pink .ag-total .b-val { color: #b496ff; text-shadow: 0 0 20px rgba(180,150,255,0.4); }
+.panel-pink .ag-tax-val { color: #b496ff; }
+.panel-pink .ag-disc-final { color: #b496ff; text-shadow: 0 0 20px rgba(180,150,255,0.4); }
+.save-btn-agency:not(:disabled) { background: #b496ff; color: #0e0010; box-shadow: 0 4px 30px rgba(180,150,255,0.4); }
+.save-btn-agency:hover:not(:disabled) { box-shadow: 0 6px 40px rgba(180,150,255,0.6); }
 
 /* ── FIELDS ── */
 .field { margin-bottom: 0.9rem; }
@@ -402,6 +413,56 @@ body::after {
 .save-btn-canada:hover:not(:disabled) { box-shadow: 0 6px 40px rgba(255,82,82,0.6); }
 .save-btn-usa:hover:not(:disabled)    { box-shadow: 0 6px 40px rgba(255,157,66,0.6); }
 
+/* ── DISCOUNT ── */
+.discount-box {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+.disc-presets { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 0.9rem; }
+.disc-btn {
+  flex: 1;
+  min-width: 44px;
+  padding: 7px 4px;
+  border: 1px solid var(--glass-border);
+  border-radius: 30px;
+  background: rgba(255,255,255,0.05);
+  color: var(--text2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.18s;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.disc-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+.disc-btn.selected { font-weight: 700; }
+.panel-pink .disc-btn.selected { border-color: var(--pink); background: rgba(245,105,200,0.15); color: var(--pink); }
+.panel-pink .ag-section .disc-btn.selected { border-color: #b496ff; background: rgba(180,150,255,0.15); color: #b496ff; }
+.panel-blue   .disc-btn.selected { border-color: var(--blue); background: rgba(66,180,255,0.15);  color: var(--blue); }
+.panel-canada .disc-btn.selected { border-color: var(--red);  background: rgba(255,82,82,0.15);   color: var(--red); }
+.panel-usa    .disc-btn.selected { border-color: var(--ora);  background: rgba(255,157,66,0.15);  color: var(--ora); }
+.disc-custom { display: flex; align-items: center; gap: 10px; margin-bottom: 0.9rem; }
+.disc-custom label { font-size: 11px; color: var(--text3); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.disc-custom .input-wrap { flex: 1; }
+.disc-custom input { font-size: 16px !important; }
+.disc-result { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); overflow: hidden; }
+.disc-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.disc-row:last-child { border-bottom: none; background: rgba(255,255,255,0.04); }
+.disc-row-label { font-size: 13px; color: var(--text2); }
+.disc-row-val { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; }
+.disc-saving { color: #5dffb0; }
+.disc-final { font-size: 17px !important; }
+.panel-pink   .disc-final { color: var(--pink); text-shadow: 0 0 20px rgba(245,105,200,0.4); }
+.panel-blue   .disc-final { color: var(--blue); text-shadow: 0 0 20px rgba(66,180,255,0.4); }
+.panel-canada .disc-final { color: var(--red);  text-shadow: 0 0 20px rgba(255,82,82,0.4); }
+.panel-usa    .disc-final { color: var(--ora);  text-shadow: 0 0 20px rgba(255,157,66,0.4); }
+
 /* ── HISTORY ── */
 .history-list { display: flex; flex-direction: column; gap: 10px; }
 .history-item {
@@ -429,6 +490,7 @@ body::after {
 .tag-blue   { background: rgba(66,180,255,0.15);  color: var(--blue); border: 1px solid rgba(66,180,255,0.3); }
 .tag-canada { background: rgba(255,82,82,0.15);   color: var(--red);  border: 1px solid rgba(255,82,82,0.3); }
 .tag-usa    { background: rgba(255,157,66,0.15);  color: var(--ora);  border: 1px solid rgba(255,157,66,0.3); }
+.tag-agency { background: rgba(180,150,255,0.15); color: #b496ff;    border: 1px solid rgba(180,150,255,0.3); }
 .hi-meta    { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
 .hi-formula { font-size: 13px; color: var(--text2); }
 .hi-total   { font-family: 'DM Mono', monospace; font-size: 17px; font-weight: 500; text-align: right; }
@@ -436,6 +498,7 @@ body::after {
 .hi-total.c-blue   { color: var(--blue); text-shadow: 0 0 16px rgba(66,180,255,0.4); }
 .hi-total.c-canada { color: var(--red);  text-shadow: 0 0 16px rgba(255,82,82,0.4); }
 .hi-total.c-usa    { color: var(--ora);  text-shadow: 0 0 16px rgba(255,157,66,0.4); }
+.hi-total.c-agency { color: #b496ff;    text-shadow: 0 0 16px rgba(180,150,255,0.4); }
 .hi-sub     { font-size: 11px; color: var(--text3); text-align: right; margin-top: 3px; }
 
 .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 13px; }
@@ -496,7 +559,63 @@ body::after {
       <div class="tax-card"><div class="gc-label">Excl. GST</div><div class="gc-amount" id="f-exgst">—</div><div class="gc-tag">without tax</div></div>
       <div class="tax-card highlighted"><div class="gc-label">Incl. GST</div><div class="gc-amount" id="f-ingst">—</div><div class="gc-tag">with tax</div></div>
     </div>
+    <div class="section-head">Apply discount</div>
+    <div class="discount-box">
+      <div class="disc-presets">
+        <button class="disc-btn" id="f-d5"  onclick="setDisc('f',5)">5%</button>
+        <button class="disc-btn" id="f-d10" onclick="setDisc('f',10)">10%</button>
+        <button class="disc-btn" id="f-d15" onclick="setDisc('f',15)">15%</button>
+        <button class="disc-btn" id="f-d20" onclick="setDisc('f',20)">20%</button>
+        <button class="disc-btn" id="f-d25" onclick="setDisc('f',25)">25%</button>
+      </div>
+      <div class="disc-custom">
+        <label>Custom %</label>
+        <div class="input-wrap"><span class="input-pre">%</span><input type="number" id="f-disc" placeholder="0" min="0" max="100" step="1" oninput="clearDiscPresets('f');calcFormula()"></div>
+      </div>
+      <div class="disc-result">
+        <div class="disc-row"><span class="disc-row-label">Before discount</span><span class="disc-row-val" id="f-before-disc">—</span></div>
+        <div class="disc-row"><span class="disc-row-label">You save</span><span class="disc-row-val disc-saving" id="f-disc-amt">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final price</span><span class="disc-row-val disc-final" id="f-final">—</span></div>
+      </div>
+    </div>
     <button class="save-btn save-btn-pink" id="f-save" onclick="saveToHistory('formula')" disabled>Save to History</button>
+
+    <!-- AGENCY PRICING -->
+    <div class="agency-divider"><div class="agency-divider-line"></div><span class="agency-divider-label">Agency pricing</span><div class="agency-divider-line"></div></div>
+    <div class="formula-chip chip-agency"><span class="dot"></span>(Price ÷ 0.50 × 4.5) + (Shipping × 2)</div>
+    <div class="section-head">Breakdown</div>
+    <div class="breakdown">
+      <div class="breakdown-row"><span class="b-label"><span class="op">1.</span> Price ÷ 0.50</span><span class="b-val" id="ag-s1">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">2.</span> Result × 4.5</span><span class="b-val" id="ag-s2">—</span></div>
+      <div class="breakdown-row"><span class="b-label"><span class="op">3.</span> Shipping × 2</span><span class="b-val" id="ag-s3">—</span></div>
+      <div class="breakdown-row total-row ag-total"><span class="b-label">Subtotal (excl. GST)</span><span class="b-val" id="ag-sub">—</span></div>
+    </div>
+    <div class="section-head">GST (15%)</div>
+    <div class="tax-info"><span class="gi-label">GST amount</span><span class="gi-val ag-tax-val" id="ag-gst">—</span></div>
+    <div class="tax-grid">
+      <div class="tax-card"><div class="gc-label">Excl. GST</div><div class="gc-amount" id="ag-exgst">—</div><div class="gc-tag">without tax</div></div>
+      <div class="tax-card agency-hl"><div class="gc-label">Incl. GST</div><div class="gc-amount" id="ag-ingst">—</div><div class="gc-tag">with tax</div></div>
+    </div>
+    <div class="section-head">Apply discount</div>
+    <div class="discount-box">
+      <div class="disc-presets">
+        <button class="disc-btn" id="ag-d5"  onclick="setDisc('ag',5)">5%</button>
+        <button class="disc-btn" id="ag-d10" onclick="setDisc('ag',10)">10%</button>
+        <button class="disc-btn" id="ag-d15" onclick="setDisc('ag',15)">15%</button>
+        <button class="disc-btn" id="ag-d20" onclick="setDisc('ag',20)">20%</button>
+        <button class="disc-btn" id="ag-d25" onclick="setDisc('ag',25)">25%</button>
+      </div>
+      <div class="disc-custom">
+        <label>Custom %</label>
+        <div class="input-wrap"><span class="input-pre">%</span><input type="number" id="ag-disc" placeholder="0" min="0" max="100" step="1" oninput="clearDiscPresets('ag');calcFormula()"></div>
+      </div>
+      <div class="disc-result">
+        <div class="disc-row"><span class="disc-row-label">Before discount</span><span class="disc-row-val" id="ag-before-disc">—</span></div>
+        <div class="disc-row"><span class="disc-row-label">You save</span><span class="disc-row-val disc-saving" id="ag-disc-amt">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final price</span><span class="disc-row-val ag-disc-final" id="ag-final">—</span></div>
+      </div>
+    </div>
+    <button class="save-btn save-btn-agency" id="ag-save" onclick="saveToHistory('agency')" disabled>Save Agency to History</button>
   </div>
 
   <!-- EU — BLUE -->
@@ -521,6 +640,25 @@ body::after {
     <div class="tax-grid">
       <div class="tax-card"><div class="gc-label">Excl. VAT</div><div class="gc-amount" id="eu-exvat">—</div><div class="gc-tag">without tax</div></div>
       <div class="tax-card highlighted"><div class="gc-label">Incl. VAT</div><div class="gc-amount" id="eu-invat">—</div><div class="gc-tag">with tax</div></div>
+    </div>
+    <div class="section-head">Apply discount</div>
+    <div class="discount-box">
+      <div class="disc-presets">
+        <button class="disc-btn" id="eu-d5"  onclick="setDisc('eu',5)">5%</button>
+        <button class="disc-btn" id="eu-d10" onclick="setDisc('eu',10)">10%</button>
+        <button class="disc-btn" id="eu-d15" onclick="setDisc('eu',15)">15%</button>
+        <button class="disc-btn" id="eu-d20" onclick="setDisc('eu',20)">20%</button>
+        <button class="disc-btn" id="eu-d25" onclick="setDisc('eu',25)">25%</button>
+      </div>
+      <div class="disc-custom">
+        <label>Custom %</label>
+        <div class="input-wrap"><span class="input-pre">%</span><input type="number" id="eu-disc" placeholder="0" min="0" max="100" step="1" oninput="clearDiscPresets('eu');calcEU()"></div>
+      </div>
+      <div class="disc-result">
+        <div class="disc-row"><span class="disc-row-label">Before discount</span><span class="disc-row-val" id="eu-before-disc">—</span></div>
+        <div class="disc-row"><span class="disc-row-label">You save</span><span class="disc-row-val disc-saving" id="eu-disc-amt">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final price</span><span class="disc-row-val disc-final" id="eu-final">—</span></div>
+      </div>
     </div>
     <button class="save-btn save-btn-blue" id="eu-save" onclick="saveToHistory('eu')" disabled>Save to History</button>
   </div>
@@ -549,6 +687,25 @@ body::after {
       <div class="tax-card"><div class="gc-label">Excl. HST</div><div class="gc-amount" id="ca-exhst">—</div><div class="gc-tag">without tax</div></div>
       <div class="tax-card highlighted"><div class="gc-label">Incl. HST</div><div class="gc-amount" id="ca-inhst">—</div><div class="gc-tag">with tax</div></div>
     </div>
+    <div class="section-head">Apply discount</div>
+    <div class="discount-box">
+      <div class="disc-presets">
+        <button class="disc-btn" id="ca-d5"  onclick="setDisc('ca',5)">5%</button>
+        <button class="disc-btn" id="ca-d10" onclick="setDisc('ca',10)">10%</button>
+        <button class="disc-btn" id="ca-d15" onclick="setDisc('ca',15)">15%</button>
+        <button class="disc-btn" id="ca-d20" onclick="setDisc('ca',20)">20%</button>
+        <button class="disc-btn" id="ca-d25" onclick="setDisc('ca',25)">25%</button>
+      </div>
+      <div class="disc-custom">
+        <label>Custom %</label>
+        <div class="input-wrap"><span class="input-pre">%</span><input type="number" id="ca-disc" placeholder="0" min="0" max="100" step="1" oninput="clearDiscPresets('ca');calcCanada()"></div>
+      </div>
+      <div class="disc-result">
+        <div class="disc-row"><span class="disc-row-label">Before discount</span><span class="disc-row-val" id="ca-before-disc">—</span></div>
+        <div class="disc-row"><span class="disc-row-label">You save</span><span class="disc-row-val disc-saving" id="ca-disc-amt">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final price</span><span class="disc-row-val disc-final" id="ca-final">—</span></div>
+      </div>
+    </div>
     <button class="save-btn save-btn-canada" id="ca-save" onclick="saveToHistory('canada')" disabled>Save to History</button>
   </div>
 
@@ -574,6 +731,25 @@ body::after {
     <div class="tax-grid">
       <div class="tax-card"><div class="gc-label">Pre-tax</div><div class="gc-amount" id="us-pretax">—</div><div class="gc-tag">excl. sales tax</div></div>
       <div class="tax-card highlighted"><div class="gc-label">Est. total</div><div class="gc-amount" id="us-total">—</div><div class="gc-tag">incl. ~10% tax</div></div>
+    </div>
+    <div class="section-head">Apply discount</div>
+    <div class="discount-box">
+      <div class="disc-presets">
+        <button class="disc-btn" id="us-d5"  onclick="setDisc('us',5)">5%</button>
+        <button class="disc-btn" id="us-d10" onclick="setDisc('us',10)">10%</button>
+        <button class="disc-btn" id="us-d15" onclick="setDisc('us',15)">15%</button>
+        <button class="disc-btn" id="us-d20" onclick="setDisc('us',20)">20%</button>
+        <button class="disc-btn" id="us-d25" onclick="setDisc('us',25)">25%</button>
+      </div>
+      <div class="disc-custom">
+        <label>Custom %</label>
+        <div class="input-wrap"><span class="input-pre">%</span><input type="number" id="us-disc" placeholder="0" min="0" max="100" step="1" oninput="clearDiscPresets('us');calcUSA()"></div>
+      </div>
+      <div class="disc-result">
+        <div class="disc-row"><span class="disc-row-label">Before discount</span><span class="disc-row-val" id="us-before-disc">—</span></div>
+        <div class="disc-row"><span class="disc-row-label">You save</span><span class="disc-row-val disc-saving" id="us-disc-amt">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final price</span><span class="disc-row-val disc-final" id="us-final">—</span></div>
+      </div>
     </div>
     <button class="save-btn save-btn-usa" id="us-save" onclick="saveToHistory('usa')" disabled>Save to History</button>
   </div>
@@ -620,20 +796,65 @@ body::after {
     document.getElementById('panel-' + name).classList.add('active');
   }
 
+  function applyDisc(prefix, withTax, fmt) {
+    const d = parseFloat(document.getElementById(prefix+'-disc').value);
+    const hasDis = !isNaN(d) && d > 0 && d <= 100;
+    const discAmt = hasDis ? withTax * (d/100) : 0;
+    const final = withTax - discAmt;
+    document.getElementById(prefix+'-before-disc').textContent = fmt(withTax);
+    document.getElementById(prefix+'-disc-amt').textContent    = hasDis ? '−'+fmt(discAmt) : '—';
+    document.getElementById(prefix+'-final').textContent       = fmt(final);
+  }
+
+  function setDisc(prefix, pct) {
+    const inp = document.getElementById(prefix+'-disc');
+    inp.value = pct;
+    [5,10,15,20,25].forEach(p => {
+      const btn = document.getElementById(prefix+'-d'+p);
+      if (btn) btn.classList.toggle('selected', p === pct);
+    });
+    const fn = {f:calcFormula, eu:calcEU, ca:calcCanada, us:calcUSA, ag:calcFormula}[prefix];
+    if (fn) fn();
+  }
+
+  function clearDiscPresets(prefix) {
+    [5,10,15,20,25].forEach(p => {
+      const btn = document.getElementById(prefix+'-d'+p);
+      if (btn) btn.classList.remove('selected');
+    });
+  }
+
   function calcFormula() {
     const p = parseFloat(document.getElementById('f-price').value);
     const s = parseFloat(document.getElementById('f-ship').value);
     const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
     const s1 = hasP ? p/0.5 : null, s2 = s1!==null ? s1*4 : null, s3 = hasS ? s*2 : null;
     const sub = (s2||0)+(s3||0), v = hasP||hasS;
+    const withTax = sub*1.15;
     document.getElementById('f-s1').textContent    = fmtU(s1);
     document.getElementById('f-s2').textContent    = fmtU(s2);
     document.getElementById('f-s3').textContent    = fmtU(s3);
     document.getElementById('f-sub').textContent   = v ? fmtU(sub) : '—';
     document.getElementById('f-gst').textContent   = v ? fmtU(sub*0.15) : '—';
     document.getElementById('f-exgst').textContent = v ? fmtU(sub) : '—';
-    document.getElementById('f-ingst').textContent = v ? fmtU(sub*1.15) : '—';
+    document.getElementById('f-ingst').textContent = v ? fmtU(withTax) : '—';
+    if (v) applyDisc('f', withTax, fmtU);
+    else { ['f-before-disc','f-disc-amt','f-final'].forEach(id=>document.getElementById(id).textContent='—'); }
     document.getElementById('f-save').disabled = !v;
+
+    // Agency pricing: price / 0.50 × 4.5 + shipping × 2
+    const ag1 = hasP ? p/0.5 : null, ag2 = ag1!==null ? ag1*4.5 : null, ag3 = hasS ? s*2 : null;
+    const agSub = (ag2||0)+(ag3||0), agWithTax = agSub*1.15;
+    document.getElementById('ag-s1').textContent    = fmtU(ag1);
+    document.getElementById('ag-s2').textContent    = fmtU(ag2);
+    document.getElementById('ag-s3').textContent    = fmtU(ag3);
+    document.getElementById('ag-sub').textContent   = v ? fmtU(agSub) : '—';
+    document.getElementById('ag-gst').textContent   = v ? fmtU(agSub*0.15) : '—';
+    document.getElementById('ag-exgst').textContent = v ? fmtU(agSub) : '—';
+    document.getElementById('ag-ingst').textContent = v ? fmtU(agWithTax) : '—';
+    if (v) applyDisc('ag', agWithTax, fmtU);
+    else { ['ag-before-disc','ag-disc-amt','ag-final'].forEach(id=>document.getElementById(id).textContent='—'); }
+    document.getElementById('ag-save').disabled = !v;
   }
 
   function calcEU() {
@@ -641,12 +862,15 @@ body::after {
     const s = parseFloat(document.getElementById('eu-ship').value);
     const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
     const s1 = hasP ? p*4 : null, sub = (s1||0)+(hasS?s:0), v = hasP||hasS;
+    const withTax = sub*1.20;
     document.getElementById('eu-s1').textContent    = fmtE(s1);
     document.getElementById('eu-s2').textContent    = hasS ? fmtE(s) : '—';
     document.getElementById('eu-sub').textContent   = v ? fmtE(sub) : '—';
     document.getElementById('eu-vat').textContent   = v ? fmtE(sub*0.20) : '—';
     document.getElementById('eu-exvat').textContent = v ? fmtE(sub) : '—';
-    document.getElementById('eu-invat').textContent = v ? fmtE(sub*1.20) : '—';
+    document.getElementById('eu-invat').textContent = v ? fmtE(withTax) : '—';
+    if (v) applyDisc('eu', withTax, fmtE);
+    else { ['eu-before-disc','eu-disc-amt','eu-final'].forEach(id=>document.getElementById(id).textContent='—'); }
     document.getElementById('eu-save').disabled = !v;
   }
 
@@ -656,13 +880,16 @@ body::after {
     const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
     const s1 = hasP ? p*0.6 : null, s2 = s1!==null ? s1*4 : null;
     const sub = (s2||0)+(hasS?s:0), v = hasP||hasS;
+    const withTax = sub*1.13;
     document.getElementById('ca-s1').textContent    = fmtC(s1);
     document.getElementById('ca-s2').textContent    = fmtC(s2);
     document.getElementById('ca-s3').textContent    = hasS ? fmtC(s) : '—';
     document.getElementById('ca-sub').textContent   = v ? fmtC(sub) : '—';
     document.getElementById('ca-hst').textContent   = v ? fmtC(sub*0.13) : '—';
     document.getElementById('ca-exhst').textContent = v ? fmtC(sub) : '—';
-    document.getElementById('ca-inhst').textContent = v ? fmtC(sub*1.13) : '—';
+    document.getElementById('ca-inhst').textContent = v ? fmtC(withTax) : '—';
+    if (v) applyDisc('ca', withTax, fmtC);
+    else { ['ca-before-disc','ca-disc-amt','ca-final'].forEach(id=>document.getElementById(id).textContent='—'); }
     document.getElementById('ca-save').disabled = !v;
   }
 
@@ -671,12 +898,15 @@ body::after {
     const s = parseFloat(document.getElementById('us-ship').value);
     const hasP = !isNaN(p)&&p>=0, hasS = !isNaN(s)&&s>=0;
     const s1 = hasP ? p*4 : null, sub = (s1||0)+(hasS?s:0), v = hasP||hasS;
+    const withTax = sub*1.10;
     document.getElementById('us-s1').textContent     = fmtU(s1);
     document.getElementById('us-s2').textContent     = hasS ? fmtU(s) : '—';
     document.getElementById('us-sub').textContent    = v ? fmtU(sub) : '—';
     document.getElementById('us-tax').textContent    = v ? fmtU(sub*0.10) : '—';
     document.getElementById('us-pretax').textContent = v ? fmtU(sub) : '—';
-    document.getElementById('us-total').textContent  = v ? fmtU(sub*1.10) : '—';
+    document.getElementById('us-total').textContent  = v ? fmtU(withTax) : '—';
+    if (v) applyDisc('us', withTax, fmtU);
+    else { ['us-before-disc','us-disc-amt','us-final'].forEach(id=>document.getElementById(id).textContent='—'); }
     document.getElementById('us-save').disabled = !v;
   }
 
@@ -699,26 +929,39 @@ body::after {
     document.getElementById('gst-total').textContent = fmtU(total);
   }
 
+  function getDiscLabel(prefix) {
+    const d = parseFloat(document.getElementById(prefix+'-disc').value);
+    return (!isNaN(d) && d > 0) ? ` · ${d}% off` : '';
+  }
+  function getFinalVal(prefix, withTax, fmt) {
+    const d = parseFloat(document.getElementById(prefix+'-disc').value);
+    return (!isNaN(d) && d > 0) ? fmt(withTax*(1-d/100)) : fmt(withTax);
+  }
+
   function saveToHistory(type) {
     const now = new Date();
     const time = now.toLocaleTimeString('en-NZ',{hour:'2-digit',minute:'2-digit'});
     let e = {type,time};
     if (type==='formula') {
       const p=parseFloat(document.getElementById('f-price').value)||0, s=parseFloat(document.getElementById('f-ship').value)||0;
-      const sub=(p/0.5*4)+(s*2);
-      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}`,main:fmtU(sub*1.15),sub:fmtU(sub)+' excl. GST',color:'c-pink',tag:'tag-pink',tagLabel:'NZ Formula'};
+      const sub=(p/0.5*4)+(s*2), withTax=sub*1.15;
+      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}${getDiscLabel('f')}`,main:getFinalVal('f',withTax,fmtU),sub:fmtU(withTax)+' incl. GST',color:'c-pink',tag:'tag-pink',tagLabel:'NZ Formula'};
+    } else if (type==='agency') {
+      const p=parseFloat(document.getElementById('f-price').value)||0, s=parseFloat(document.getElementById('f-ship').value)||0;
+      const sub=(p/0.5*4.5)+(s*2), withTax=sub*1.15;
+      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}${getDiscLabel('ag')}`,main:getFinalVal('ag',withTax,fmtU),sub:fmtU(withTax)+' incl. GST',color:'c-agency',tag:'tag-agency',tagLabel:'NZ Agency'};
     } else if (type==='eu') {
       const p=parseFloat(document.getElementById('eu-price').value)||0, s=parseFloat(document.getElementById('eu-ship').value)||0;
-      const sub=(p*4)+s;
-      e={...e,label:`Price €${p.toFixed(2)}, Ship €${s.toFixed(2)}`,main:fmtE(sub*1.20),sub:fmtE(sub)+' excl. VAT',color:'c-blue',tag:'tag-blue',tagLabel:'EU Cal'};
+      const sub=(p*4)+s, withTax=sub*1.20;
+      e={...e,label:`Price €${p.toFixed(2)}, Ship €${s.toFixed(2)}${getDiscLabel('eu')}`,main:getFinalVal('eu',withTax,fmtE),sub:fmtE(withTax)+' incl. VAT',color:'c-blue',tag:'tag-blue',tagLabel:'EU Cal'};
     } else if (type==='canada') {
       const p=parseFloat(document.getElementById('ca-price').value)||0, s=parseFloat(document.getElementById('ca-ship').value)||0;
-      const sub=(p*0.6*4)+s;
-      e={...e,label:`Price C$${p.toFixed(2)}, Ship C$${s.toFixed(2)}`,main:fmtC(sub*1.13),sub:fmtC(sub)+' excl. HST',color:'c-canada',tag:'tag-canada',tagLabel:'Canada'};
+      const sub=(p*0.6*4)+s, withTax=sub*1.13;
+      e={...e,label:`Price C$${p.toFixed(2)}, Ship C$${s.toFixed(2)}${getDiscLabel('ca')}`,main:getFinalVal('ca',withTax,fmtC),sub:fmtC(withTax)+' incl. HST',color:'c-canada',tag:'tag-canada',tagLabel:'Canada'};
     } else {
       const p=parseFloat(document.getElementById('us-price').value)||0, s=parseFloat(document.getElementById('us-ship').value)||0;
-      const sub=(p*4)+s;
-      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}`,main:fmtU(sub*1.10),sub:fmtU(sub)+' pre-tax',color:'c-usa',tag:'tag-usa',tagLabel:'USA Cal'};
+      const sub=(p*4)+s, withTax=sub*1.10;
+      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}${getDiscLabel('us')}`,main:getFinalVal('us',withTax,fmtU),sub:fmtU(withTax)+' incl. tax',color:'c-usa',tag:'tag-usa',tagLabel:'USA Cal'};
     }
     history.unshift(e);
     renderHistory();
