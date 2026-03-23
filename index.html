@@ -610,9 +610,10 @@ body::after {
         <div class="input-wrap"><span class="input-pre">%</span><input type="number" id="ag-disc" placeholder="0" min="0" max="100" step="1" oninput="clearDiscPresets('ag');calcFormula()"></div>
       </div>
       <div class="disc-result">
-        <div class="disc-row"><span class="disc-row-label">Before discount</span><span class="disc-row-val" id="ag-before-disc">—</span></div>
+        <div class="disc-row"><span class="disc-row-label">Before discount (incl. GST)</span><span class="disc-row-val" id="ag-before-disc">—</span></div>
         <div class="disc-row"><span class="disc-row-label">You save</span><span class="disc-row-val disc-saving" id="ag-disc-amt">—</span></div>
-        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final price</span><span class="disc-row-val ag-disc-final" id="ag-final">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final excl. GST</span><span class="disc-row-val ag-disc-final" id="ag-final-ex">—</span></div>
+        <div class="disc-row"><span class="disc-row-label" style="font-weight:500;color:var(--text)">Final incl. GST</span><span class="disc-row-val ag-disc-final" id="ag-final">—</span></div>
       </div>
     </div>
     <button class="save-btn save-btn-agency" id="ag-save" onclick="saveToHistory('agency')" disabled>Save Agency to History</button>
@@ -852,8 +853,19 @@ body::after {
     document.getElementById('ag-gst').textContent   = v ? fmtU(agSub*0.15) : '—';
     document.getElementById('ag-exgst').textContent = v ? fmtU(agSub) : '—';
     document.getElementById('ag-ingst').textContent = v ? fmtU(agWithTax) : '—';
-    if (v) applyDisc('ag', agWithTax, fmtU);
-    else { ['ag-before-disc','ag-disc-amt','ag-final'].forEach(id=>document.getElementById(id).textContent='—'); }
+    if (v) {
+      const d = parseFloat(document.getElementById('ag-disc').value);
+      const hasDis = !isNaN(d) && d > 0 && d <= 100;
+      const discAmt = hasDis ? agWithTax*(d/100) : 0;
+      const finalInc = agWithTax - discAmt;
+      const finalEx  = finalInc / 1.15;
+      document.getElementById('ag-before-disc').textContent = fmtU(agWithTax);
+      document.getElementById('ag-disc-amt').textContent    = hasDis ? '−'+fmtU(discAmt) : '—';
+      document.getElementById('ag-final-ex').textContent    = fmtU(finalEx);
+      document.getElementById('ag-final').textContent       = fmtU(finalInc);
+    } else {
+      ['ag-before-disc','ag-disc-amt','ag-final-ex','ag-final'].forEach(id=>document.getElementById(id).textContent='—');
+    }
     document.getElementById('ag-save').disabled = !v;
   }
 
@@ -949,7 +961,12 @@ body::after {
     } else if (type==='agency') {
       const p=parseFloat(document.getElementById('f-price').value)||0, s=parseFloat(document.getElementById('f-ship').value)||0;
       const sub=(p/0.5*4.5)+(s*2), withTax=sub*1.15;
-      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}${getDiscLabel('ag')}`,main:getFinalVal('ag',withTax,fmtU),sub:fmtU(withTax)+' incl. GST',color:'c-agency',tag:'tag-agency',tagLabel:'NZ Agency'};
+      const d=parseFloat(document.getElementById('ag-disc').value);
+      const hasDis=!isNaN(d)&&d>0;
+      const finalInc=hasDis?withTax*(1-d/100):withTax;
+      const finalEx=finalInc/1.15;
+      const discStr=hasDis?` · ${d}% off`:'';
+      e={...e,label:`Price $${p.toFixed(2)}, Ship $${s.toFixed(2)}${discStr}`,main:fmtU(finalInc),sub:fmtU(finalEx)+' excl. GST',color:'c-agency',tag:'tag-agency',tagLabel:'NZ Agency'};
     } else if (type==='eu') {
       const p=parseFloat(document.getElementById('eu-price').value)||0, s=parseFloat(document.getElementById('eu-ship').value)||0;
       const sub=(p*4)+s, withTax=sub*1.20;
